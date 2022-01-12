@@ -1,18 +1,49 @@
 import "dart:convert";
 import "dart:io";
 
+import 'package:flutter/foundation.dart';
 import 'package:recase/recase.dart';
+
+String _changeName(String srt, [bool snakeCase = false]) {
+  List<String> input = ['500px'];
+  List<String> output = ['fiveHundredPx'];
+  List<String> outputSnakeCase = ['five_hundred_px'];
+
+  int index = input.indexOf(srt);
+
+  if (index == -1) {
+    return srt;
+  }
+
+  if (snakeCase) {
+    return outputSnakeCase[index];
+  }
+
+  return output[index];
+}
 
 void main(List<String> args) {
   File fontsConfigFile = File(args[0]);
 
-  if (!fontsConfigFile.existsSync()) {
-    print('config file not found');
+  File brandsConfigFile = File(args[1]);
+  File regularConfigFile = File(args[2]);
+  File solidConfigFile = File(args[3]);
+
+  if (!fontsConfigFile.existsSync() ||
+      !brandsConfigFile.existsSync() ||
+      !regularConfigFile.existsSync() ||
+      !solidConfigFile.existsSync()) {
+    if (kDebugMode) {
+      print('config file not found');
+    }
     exit(0);
   }
 
-  String content = fontsConfigFile.readAsStringSync();
-  List<dynamic> icons = json.decode(content);
+  List<dynamic> icons = json.decode(fontsConfigFile.readAsStringSync());
+
+  List<dynamic> brands = json.decode(brandsConfigFile.readAsStringSync());
+  List<dynamic> regular = json.decode(regularConfigFile.readAsStringSync());
+  List<dynamic> solid = json.decode(solidConfigFile.readAsStringSync());
 
   List<String> generatedOutput = [
     "library awesome_icons;\n",
@@ -22,9 +53,31 @@ void main(List<String> args) {
     "const Map<String, IconData> awesomeIconsMap = {\n"
   ];
 
+  // fonts:
+  // - family: FontAwesome5Free
+  // fonts:
+  // - asset: fonts/Free-Regular-400.otf
+  // - family: FontAwesome5Brands
+  // fonts:
+  // - asset: fonts/Brands-Regular-400.otf
+  // - family: FontAwesome5FreeSolid
+  // fonts:
+  // - asset: fonts/Free-Solid-900.otf
+  // weight: 900
+
   for (Map<String, dynamic> icon in icons) {
-    icon.forEach((String iconName, dynamic iconUnicode) =>
-        generatedOutput.add("'$iconName' : AwesomeIconData(0x$iconUnicode),\n"));
+    icon.forEach((String iconName, dynamic iconUnicode) {
+      if (brands.contains(iconName)) {
+        generatedOutput.add("'fab-$iconName' : FontAwesome5Brands(0x$iconUnicode),\n");
+      } else if (regular.contains(iconName) && solid.contains(iconName)) {
+        generatedOutput.add("'far-$iconName' : FontAwesome5Free(0x$iconUnicode),\n");
+        generatedOutput.add("'fas-$iconName' : FontAwesome5FreeSolid(0x$iconUnicode),\n");
+      } else if (regular.contains(iconName)) {
+        generatedOutput.add("'far-$iconName' : FontAwesome5Free(0x$iconUnicode),\n");
+      } else {
+        generatedOutput.add("'fas-$iconName' : FontAwesome5FreeSolid(0x$iconUnicode),\n");
+      }
+    });
   }
 
   generatedOutput.add("};\n");
@@ -32,17 +85,27 @@ void main(List<String> args) {
   generatedOutput.add("class AwesomeIcons {\n");
 
   for (Map<String, dynamic> icon in icons) {
-    icon.forEach((String iconName, dynamic iconUnicode) =>
-        generatedOutput.add("static const IconData ${iconName.camelCase} = AwesomeIconData(0x$iconUnicode);\n"));
-  }
+    icon.forEach((String iconName, dynamic iconUnicode) {
 
-  generatedOutput.add("}\n");
 
-  generatedOutput.add("class AwesomeIconsSnakeCase {\n");
+      if (brands.contains(iconName)) {
+        generatedOutput
+            .add("static const IconData ${_changeName(iconName.camelCase)} = FontAwesome5Brands(0x$iconUnicode);\n");
+      } else if (regular.contains(iconName) && solid.contains(iconName)) {
+        String name = "solid-$iconName";
 
-  for (Map<String, dynamic> icon in icons) {
-    icon.forEach((String iconName, dynamic iconUnicode) =>
-        generatedOutput.add("static const IconData ${iconName.snakeCase} = AwesomeIconData(0x$iconUnicode);\n"));
+        generatedOutput
+            .add("static const IconData ${_changeName(name.camelCase)} = FontAwesome5FreeSolid(0x$iconUnicode);\n");
+        generatedOutput
+            .add("static const IconData ${_changeName(iconName.camelCase)} = FontAwesome5Free(0x$iconUnicode);\n");
+      } else if (regular.contains(iconName)) {
+        generatedOutput
+            .add("static const IconData ${_changeName(iconName.camelCase)} = FontAwesome5Free(0x$iconUnicode);\n");
+      } else {
+        generatedOutput
+            .add("static const IconData ${_changeName(iconName.camelCase)} = FontAwesome5FreeSolid(0x$iconUnicode);\n");
+      }
+    });
   }
 
   generatedOutput.add("}\n");

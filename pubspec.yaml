@@ -40,11 +40,15 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
    fonts:
-     - family: FontAwesome5
+     - family: FontAwesome5Free
        fonts:
-         - asset: otfs/Font-Awesome-5-Free-Regular-400.ttf
-         - asset: otfs/Font-Awesome-5-Brands-Regular-400.ttf
-         - asset: otfs/Font-Awesome-5-Free-Solid-900.ttf
+         - asset: fonts/Free-Regular-400.otf
+     - family: FontAwesome5Brands
+       fonts:
+         - asset: fonts/Brands-Regular-400.otf
+     - family: FontAwesome5FreeSolid
+       fonts:
+         - asset: fonts/Free-Solid-900.otf
            weight: 900
   #
   # For details regarding fonts in packages, see
