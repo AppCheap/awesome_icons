@@ -33,7 +33,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    List<String> keys = awesomeIconsMap.keys.toList();
+    List<String> keys = fontAwesomeIcons.keys.toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -69,8 +69,8 @@ class IconCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Icon(
-            awesomeIconsMap[icon],
-            size: 50.0,
+            fontAwesomeIcons[icon],
+            size: 24.0,
           ),
           const SizedBox(height: 30.0),
           Text(icon)
