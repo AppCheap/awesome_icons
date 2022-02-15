@@ -6,7 +6,7 @@ class FontAwesome5Free extends IconData {
           codePoint,
           fontFamily: 'FontAwesome5Free',
           fontPackage: "awesome_icons",
-          matchTextDirection: true,
+          matchTextDirection: false,
         );
 }
 
@@ -16,7 +16,7 @@ class FontAwesome5Brands extends IconData {
           codePoint,
           fontFamily: 'FontAwesome5Brands',
           fontPackage: "awesome_icons",
-          matchTextDirection: true,
+          matchTextDirection: false,
         );
 }
 
@@ -26,6 +26,6 @@ class FontAwesome5FreeSolid extends IconData {
           codePoint,
           fontFamily: 'FontAwesome5FreeSolid',
           fontPackage: "awesome_icons",
-          matchTextDirection: true,
+          matchTextDirection: false,
         );
 }
