@@ -19,8 +19,8 @@ void main(List<String> args) {
   File fontsConfigFile = File('./data/icons.json');
 
   if (!fontsConfigFile.existsSync()) {
-    print('config file not found');
-    exit(0);
+    stderr.writeln('Config file not found: ${fontsConfigFile.path}');
+    exit(66);
   }
 
   Map<String, dynamic> icons = json.decode(fontsConfigFile.readAsStringSync());
